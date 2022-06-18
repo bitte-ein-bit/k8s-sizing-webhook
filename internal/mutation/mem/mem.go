@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	batchv1 "k8s.io/api/batch/v1"
 )
 
 // ErrNotSupported will be used when the validating object is not an ingress.
@@ -28,25 +28,25 @@ type memrequestfixer struct{}
 func (m memrequestfixer) fixContainers(containers []corev1.Container) []corev1.Container {
 	returned := make([]corev1.Container, 0, len(containers))
 
-		for _, c := range containers {
-			if c.Resources.Limits != nil || c.Resources.Requests != nil {
-				if c.Resources.Limits == nil {
-					c.Resources.Limits = corev1.ResourceList{}
-				}
-				if c.Resources.Requests == nil {
-					c.Resources.Requests = corev1.ResourceList{}
-				}
-
-				if c.Resources.Limits.Memory().Value() != 0 && c.Resources.Limits.Memory().Value() != c.Resources.Requests.Memory().Value() {
-					c.Resources.Requests[corev1.ResourceMemory] = c.Resources.Limits[corev1.ResourceMemory]
-				}
-				if c.Resources.Limits.Memory().Value() == 0 && c.Resources.Requests.Memory().Value() != 0 {
-					c.Resources.Limits[corev1.ResourceMemory] = c.Resources.Requests[corev1.ResourceMemory]
-				}
+	for _, c := range containers {
+		if c.Resources.Limits != nil || c.Resources.Requests != nil {
+			if c.Resources.Limits == nil {
+				c.Resources.Limits = corev1.ResourceList{}
 			}
-			returned = append(returned, c)
+			if c.Resources.Requests == nil {
+				c.Resources.Requests = corev1.ResourceList{}
+			}
+
+			if c.Resources.Limits.Memory().Value() != 0 && c.Resources.Limits.Memory().Value() != c.Resources.Requests.Memory().Value() {
+				c.Resources.Requests[corev1.ResourceMemory] = c.Resources.Limits[corev1.ResourceMemory]
+			}
+			if c.Resources.Limits.Memory().Value() == 0 && c.Resources.Requests.Memory().Value() != 0 {
+				c.Resources.Limits[corev1.ResourceMemory] = c.Resources.Requests[corev1.ResourceMemory]
+			}
 		}
-		return returned
+		returned = append(returned, c)
+	}
+	return returned
 }
 
 func (m memrequestfixer) FixMemRequest(_ context.Context, obj metav1.Object) error {

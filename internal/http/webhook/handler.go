@@ -68,7 +68,6 @@ func (h handler) allMark() (http.Handler, error) {
 	return whHandler, nil
 }
 
-
 // memFix sets up the webhook handler for marking all kubernetes resources using Kubewebhook library.
 func (h handler) memFix() (http.Handler, error) {
 	mt := kwhmutating.MutatorFunc(func(ctx context.Context, ar *kwhmodel.AdmissionReview, obj metav1.Object) (*kwhmutating.MutatorResult, error) {
@@ -102,8 +101,6 @@ func (h handler) memFix() (http.Handler, error) {
 
 	return whHandler, nil
 }
-
-
 
 // ingressValidation sets up the webhook handler for validating an ingress using a chain of validations.
 // Thec validation chain will check first if the ingress has a single host, if not it will stop the
