@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/slok/k8s-webhook-example/internal/mutation/prometheus"
+	"github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/mutation/prometheus"
 )
 
 func TestServiceMonitorSafer(t *testing.T) {

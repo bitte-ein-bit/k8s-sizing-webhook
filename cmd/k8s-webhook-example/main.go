@@ -15,12 +15,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 
-	"github.com/slok/k8s-webhook-example/internal/http/webhook"
-	"github.com/slok/k8s-webhook-example/internal/log"
-	internalmetricsprometheus "github.com/slok/k8s-webhook-example/internal/metrics/prometheus"
-	"github.com/slok/k8s-webhook-example/internal/mutation/mark"
-	internalmutationprometheus "github.com/slok/k8s-webhook-example/internal/mutation/prometheus"
-	"github.com/slok/k8s-webhook-example/internal/validation/ingress"
+	"github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/http/webhook"
+	"github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/log"
+	internalmetricsprometheus "github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/metrics/prometheus"
+	"github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/mutation/mark"
+	"github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/mutation/mem"
+	internalmutationprometheus "github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/mutation/prometheus"
+	"github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/validation/ingress"
 )
 
 var (
@@ -85,6 +86,15 @@ func runApp() error {
 	} else {
 		serviceMonitorSafer = internalmutationprometheus.DummyServiceMonitorSafer
 		logger.Warningf("service monitor safer webhook disabled")
+	}
+
+	var memFixer mem.Fixer
+	if cfg.EnableGuranteedMemory {
+		memFixer = mem.NewMemRequestFixer()
+		logger.Infof("memory fixer enabled")
+	} else {
+		memFixer = mem.DummyFixer
+		logger.Warningf("memory fixer disabled")
 	}
 
 	// Prepare run entrypoints.
@@ -159,6 +169,7 @@ func runApp() error {
 		// Webhook handler.
 		wh, err := webhook.New(webhook.Config{
 			Marker:                     marker,
+			MemoryFixer:                memFixer,
 			IngressRegexHostValidator:  ingressHostValidator,
 			IngressSingleHostValidator: ingressSingleHostValidator,
 			ServiceMonitorSafer:        serviceMonitorSafer,

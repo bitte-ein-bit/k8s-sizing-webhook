@@ -17,6 +17,7 @@ type CmdConfig struct {
 	TLSCertFilePath         string
 	TLSKeyFilePath          string
 	EnableIngressSingleHost bool
+	EnableGuranteedMemory   bool
 	IngressHostRegexes      []string
 	MinSMScrapeInterval     time.Duration
 
@@ -40,6 +41,7 @@ func NewCmdConfig() (*CmdConfig, error) {
 	app.Flag("tls-key-file-path", "the path for the webhook HTTPS server TLS key file.").StringVar(&c.TLSKeyFilePath)
 	app.Flag("webhook-label-marks", "a map of labels the webhook will set to all resources, if no labels, the label marker webhook will be disabled. Can repeat flag").Short('l').StringMapVar(&c.LabelMarks)
 	app.Flag("webhook-enable-ingress-single-host", "enables validation of ingress to have only a single host/rule.").Short('s').BoolVar(&c.EnableIngressSingleHost)
+	app.Flag("webhook-enable-guranteed-memory", "enables a webhook which ensures memory request is equal to memory limit.").Short('m').BoolVar(&c.EnableGuranteedMemory)
 	app.Flag("webhook-ingress-host-regex", "a list of regexes that will validate ingress hosts matching against this regexes, no host disables validation webhook. Can repeat flag.").Short('h').StringsVar(&c.IngressHostRegexes)
 	app.Flag("webhook-sm-min-scrape-interval", "the minimum screate interval service monitors can have.").DurationVar(&c.MinSMScrapeInterval)
 

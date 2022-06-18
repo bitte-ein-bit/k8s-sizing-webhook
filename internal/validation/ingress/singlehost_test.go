@@ -10,7 +10,7 @@ import (
 	networkingv1beta1 "k8s.io/api/networking/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/slok/k8s-webhook-example/internal/validation/ingress"
+	"github.com/allcloud-jonathan/k8s-memory-limit-fixer-webhook/internal/validation/ingress"
 )
 
 func TestSingleHostValidator(t *testing.T) {

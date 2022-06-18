@@ -12,6 +12,12 @@ func (h handler) routes(router *http.ServeMux) error {
 	}
 	router.Handle("/wh/mutating/allmark", allmark)
 
+	memFix, err := h.memFix()
+	if err != nil {
+		return err
+	}
+	router.Handle("/wh/mutating/memfix", memFix)
+
 	ingressVal, err := h.ingressValidation()
 	if err != nil {
 		return err
