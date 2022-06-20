@@ -89,7 +89,7 @@ func runApp() error {
 	}
 
 	var memFixer mem.Fixer
-	if cfg.EnableGuranteedMemory {
+	if cfg.EnableGuaranteedMemory {
 		memFixer = mem.NewMemRequestFixer()
 		logger.Infof("memory fixer enabled")
 	} else {
