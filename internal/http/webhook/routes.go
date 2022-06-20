@@ -17,18 +17,5 @@ func (h handler) routes(router *http.ServeMux) error {
 		return err
 	}
 	router.Handle("/wh/mutating/memfix", memFix)
-
-	ingressVal, err := h.ingressValidation()
-	if err != nil {
-		return err
-	}
-	router.Handle("/wh/validating/ingress", ingressVal)
-
-	safeServiceMonitor, err := h.safeServiceMonitor()
-	if err != nil {
-		return err
-	}
-	router.Handle("/wh/mutating/safeservicemonitor", safeServiceMonitor)
-
 	return nil
 }

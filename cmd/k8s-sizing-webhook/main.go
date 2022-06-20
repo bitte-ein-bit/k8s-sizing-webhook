@@ -20,8 +20,6 @@ import (
 	internalmetricsprometheus "github.com/bitte-ein-bit/k8s-sizing-webhook/internal/metrics/prometheus"
 	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/mark"
 	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/mem"
-	internalmutationprometheus "github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/prometheus"
-	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/validation/ingress"
 )
 
 var (
@@ -60,36 +58,6 @@ func runApp() error {
 	} else {
 		marker = mark.DummyMarker
 		logger.Warningf("label marker webhook disabled")
-	}
-
-	var ingressHostValidator ingress.Validator
-	if len(cfg.IngressHostRegexes) > 0 {
-		ingressHostValidator, err = ingress.NewHostRegexValidator(cfg.IngressHostRegexes)
-		if err != nil {
-			return fmt.Errorf("could not create ingress regex host validator: %w", err)
-		}
-		logger.Infof("ingress host regex validation webhook enabled")
-	} else {
-		ingressHostValidator = ingress.DummyValidator
-		logger.Warningf("ingress host regex validation webhook disabled")
-	}
-
-	var ingressSingleHostValidator ingress.Validator
-	if cfg.EnableIngressSingleHost {
-		ingressSingleHostValidator = ingress.SingleHostValidator
-		logger.Infof("ingress single host validation webhook enabled")
-	} else {
-		ingressSingleHostValidator = ingress.DummyValidator
-		logger.Warningf("ingress single host validation webhook disabled")
-	}
-
-	var serviceMonitorSafer internalmutationprometheus.ServiceMonitorSafer
-	if cfg.MinSMScrapeInterval != 0 {
-		serviceMonitorSafer = internalmutationprometheus.NewServiceMonitorSafer(cfg.MinSMScrapeInterval)
-		logger.Infof("service monitor safer webhook enabled")
-	} else {
-		serviceMonitorSafer = internalmutationprometheus.DummyServiceMonitorSafer
-		logger.Warningf("service monitor safer webhook disabled")
 	}
 
 	var memFixer mem.Fixer
@@ -172,13 +140,10 @@ func runApp() error {
 
 		// Webhook handler.
 		wh, err := webhook.New(webhook.Config{
-			Marker:                     marker,
-			MemoryFixer:                memFixer,
-			IngressRegexHostValidator:  ingressHostValidator,
-			IngressSingleHostValidator: ingressSingleHostValidator,
-			ServiceMonitorSafer:        serviceMonitorSafer,
-			MetricsRecorder:            metricsRec,
-			Logger:                     logger,
+			Marker:          marker,
+			MemoryFixer:     memFixer,
+			MetricsRecorder: metricsRec,
+			Logger:          logger,
 		})
 		if err != nil {
 			return fmt.Errorf("could not create webhooks handler: %w", err)
