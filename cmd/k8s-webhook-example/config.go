@@ -17,7 +17,7 @@ type CmdConfig struct {
 	TLSCertFilePath         string
 	TLSKeyFilePath          string
 	EnableIngressSingleHost bool
-	EnableGuaranteedMemory   bool
+	EnableGuaranteedMemory  bool
 	IngressHostRegexes      []string
 	MinSMScrapeInterval     time.Duration
 
