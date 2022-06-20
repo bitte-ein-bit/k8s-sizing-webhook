@@ -8,7 +8,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/slok/go-http-metrics v0.10.0
 	github.com/slok/kubewebhook/v2 v2.1.1-0.20210813062814-0d6b91199b6d
-	github.com/stretchr/testify v1.7.2
+	github.com/stretchr/testify v1.7.3
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	k8s.io/api v0.22.0
 	k8s.io/apimachinery v0.22.0
@@ -33,7 +33,6 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
-	github.com/stretchr/objx v0.2.0 // indirect
 	golang.org/x/net v0.0.0-20210913180222-943fd674d43e // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
