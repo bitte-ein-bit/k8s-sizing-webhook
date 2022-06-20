@@ -10,7 +10,7 @@ import (
 	networkingv1beta1 "k8s.io/api/networking/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/slok/k8s-webhook-example/internal/validation/ingress"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/validation/ingress"
 )
 
 func TestSingleHostValidator(t *testing.T) {

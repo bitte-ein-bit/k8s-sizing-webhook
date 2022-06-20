@@ -15,8 +15,8 @@ import (
 	kwhvalidating "github.com/slok/kubewebhook/v2/pkg/webhook/validating"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/slok/k8s-webhook-example/internal/log"
-	"github.com/slok/k8s-webhook-example/internal/validation/ingress"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/log"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/validation/ingress"
 )
 
 // kubewebhookLogger is a small proxy to use our logger with Kubewebhook.
@@ -51,6 +51,40 @@ func (h handler) allMark() (http.Handler, error) {
 	logger := kubewebhookLogger{Logger: h.logger.WithKV(log.KV{"lib": "kubewebhook", "webhook": "allMark"})}
 	wh, err := kwhmutating.NewWebhook(kwhmutating.WebhookConfig{
 		ID:      "allMark",
+		Logger:  logger,
+		Mutator: mt,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("could not create webhook: %w", err)
+	}
+	whHandler, err := kwhhttp.HandlerFor(kwhhttp.HandlerConfig{
+		Webhook: kwhwebhook.NewMeasuredWebhook(h.metrics, wh),
+		Logger:  logger,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("could not create handler from webhook: %w", err)
+	}
+
+	return whHandler, nil
+}
+
+// memFix sets up the webhook handler for marking all kubernetes resources using Kubewebhook library.
+func (h handler) memFix() (http.Handler, error) {
+	mt := kwhmutating.MutatorFunc(func(ctx context.Context, ar *kwhmodel.AdmissionReview, obj metav1.Object) (*kwhmutating.MutatorResult, error) {
+		err := h.memoryFixer.FixMemRequest(ctx, obj)
+		if err != nil {
+			return nil, fmt.Errorf("could not fix the resources memory request and limits: %w", err)
+		}
+
+		return &kwhmutating.MutatorResult{
+			MutatedObject: obj,
+			Warnings:      []string{"Resource adjusted with custom memory limits"},
+		}, nil
+	})
+
+	logger := kubewebhookLogger{Logger: h.logger.WithKV(log.KV{"lib": "kubewebhook", "webhook": "memFix"})}
+	wh, err := kwhmutating.NewWebhook(kwhmutating.WebhookConfig{
+		ID:      "memFix",
 		Logger:  logger,
 		Mutator: mt,
 	})

@@ -15,12 +15,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 
-	"github.com/slok/k8s-webhook-example/internal/http/webhook"
-	"github.com/slok/k8s-webhook-example/internal/log"
-	internalmetricsprometheus "github.com/slok/k8s-webhook-example/internal/metrics/prometheus"
-	"github.com/slok/k8s-webhook-example/internal/mutation/mark"
-	internalmutationprometheus "github.com/slok/k8s-webhook-example/internal/mutation/prometheus"
-	"github.com/slok/k8s-webhook-example/internal/validation/ingress"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/http/webhook"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/log"
+	internalmetricsprometheus "github.com/bitte-ein-bit/k8s-sizing-webhook/internal/metrics/prometheus"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/mark"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/mem"
+	internalmutationprometheus "github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/prometheus"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/validation/ingress"
 )
 
 var (
@@ -36,7 +37,7 @@ func runApp() error {
 
 	// Set up logger.
 	logrusLog := logrus.New()
-	logrusLogEntry := logrus.NewEntry(logrusLog).WithField("app", "k8s-webhook-example")
+	logrusLogEntry := logrus.NewEntry(logrusLog).WithField("app", "k8s-sizing-webhook")
 	if cfg.Debug {
 		logrusLogEntry.Logger.SetLevel(logrus.DebugLevel)
 	}
@@ -44,6 +45,7 @@ func runApp() error {
 		logrusLogEntry.Logger.SetFormatter(&logrus.JSONFormatter{})
 	}
 	logger := log.NewLogrus(logrusLogEntry).WithKV(log.KV{"version": Version})
+	logger.Infof("Starting up with Debug: %v", cfg.Debug)
 
 	// Dependencies.
 	metricsRec := internalmetricsprometheus.NewRecorder(prometheus.DefaultRegisterer)
@@ -51,6 +53,9 @@ func runApp() error {
 	var marker mark.Marker
 	if len(cfg.LabelMarks) > 0 {
 		marker = mark.NewLabelMarker(cfg.LabelMarks)
+		for k, v := range cfg.LabelMarks {
+			logger.Debugf("applying \"%s\": \"%s\"", k, v)
+		}
 		logger.Infof("label marker webhook enabled")
 	} else {
 		marker = mark.DummyMarker
@@ -85,6 +90,15 @@ func runApp() error {
 	} else {
 		serviceMonitorSafer = internalmutationprometheus.DummyServiceMonitorSafer
 		logger.Warningf("service monitor safer webhook disabled")
+	}
+
+	var memFixer mem.Fixer
+	if cfg.EnableGuaranteedMemory {
+		memFixer = mem.NewMemRequestFixer()
+		logger.Infof("memory fixer enabled")
+	} else {
+		memFixer = mem.DummyFixer
+		logger.Warningf("memory fixer disabled")
 	}
 
 	// Prepare run entrypoints.
@@ -159,6 +173,7 @@ func runApp() error {
 		// Webhook handler.
 		wh, err := webhook.New(webhook.Config{
 			Marker:                     marker,
+			MemoryFixer:                memFixer,
 			IngressRegexHostValidator:  ingressHostValidator,
 			IngressSingleHostValidator: ingressSingleHostValidator,
 			ServiceMonitorSafer:        serviceMonitorSafer,

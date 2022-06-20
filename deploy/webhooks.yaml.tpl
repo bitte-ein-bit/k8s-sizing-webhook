@@ -1,61 +1,28 @@
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
-  name: k8s-webhook-example-webhook
+  name: k8s-sizing-webhook
   labels:
-    app: k8s-webhook-example-webhook
+    app: k8s-sizing-webhook
     kind: mutator
 webhooks:
-  - name: all-mark-webhook.slok.dev
+  - name: memfix.bitteeinbit.dev
+    # Avoid chicken-egg problem with our webhook deployment.
+    objectSelector:
+      matchExpressions:
+      - key: app
+        operator: NotIn
+        values: ["k8s-sizing-webhook"]
     admissionReviewVersions: ["v1"]
     sideEffects: None
     clientConfig:
       service:
-        name: k8s-webhook-example
-        namespace: k8s-webhook-example
-        path: /wh/mutating/allmark
+        name: k8s-sizing-webhook
+        namespace: k8s-sizing-webhook
+        path: /wh/mutating/memfix
       caBundle: CA_BUNDLE
     rules:
       - operations: ["CREATE", "UPDATE"]
         apiGroups: ["*"]
         apiVersions: ["*"]
         resources: ["deployments", "daemonsets", "cronjobs", "jobs", "statefulsets", "pods"]
-
-  - name: service-monitor-safer.slok.dev
-    admissionReviewVersions: ["v1"]
-    sideEffects: None
-    clientConfig:
-      service:
-        name: k8s-webhook-example
-        namespace: k8s-webhook-example
-        path: /wh/mutating/safeservicemonitor
-      caBundle: CA_BUNDLE
-    rules:
-      - operations: ["CREATE", "UPDATE"]
-        apiGroups: ["monitoring.coreos.com"]
-        apiVersions: ["v1"]
-        resources: ["servicemonitors"]
-
----
-apiVersion: admissionregistration.k8s.io/v1
-kind: ValidatingWebhookConfiguration
-metadata:
-  name: k8s-webhook-example-webhook
-  labels:
-    app: k8s-webhook-example-webhook
-    kind: validator
-webhooks:
-  - name: ingress-validation-webhook.slok.dev
-    admissionReviewVersions: ["v1"]
-    sideEffects: None
-    clientConfig:
-      service:
-        name: k8s-webhook-example
-        namespace: k8s-webhook-example
-        path: /wh/validating/ingress
-      caBundle: CA_BUNDLE
-    rules:
-      - operations: ["CREATE", "UPDATE"]
-        apiGroups: ["*"]
-        apiVersions: ["*"]
-        resources: ["ingresses"]

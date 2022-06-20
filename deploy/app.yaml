@@ -1,32 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: k8s-webhook-example
-  namespace: k8s-webhook-example
+  name: k8s-sizing-webhook
+  namespace: k8s-sizing-webhook
   labels:
-    app: k8s-webhook-example
+    app: k8s-sizing-webhook
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: k8s-webhook-example
+      app: k8s-sizing-webhook
   template:
     metadata:
       labels:
-        app: k8s-webhook-example
+        app: k8s-sizing-webhook
     spec:
       containers:
-        - name: k8s-webhook-example
-          image: slok/k8s-webhook-example:latest
-          imagePullPolicy: Always
+        - name: k8s-sizing-webhook
+          image: docker.io/bitteeinbit/k8s-sizing-webhook:v0.1.0
+          imagePullPolicy: IfNotPresent
           args:
             - --tls-cert-file-path=/etc/webhook/certs/cert.pem
             - --tls-key-file-path=/etc/webhook/certs/key.pem
+            - --webhook-enable-guaranteed-memory
+            - --debug
             - --webhook-label-marks
             - kubewebhook=k8s-webhook-example
-            - --webhook-enable-ingress-single-host
-            - --webhook-ingress-host-regex=.*\.valhalla\.slok\.dev
-            - --webhook-sm-min-scrape-interval=15s
           ports:
             - name: http
               containerPort: 8080
@@ -43,18 +42,25 @@ spec:
             - name: webhook-certs
               mountPath: /etc/webhook/certs
               readOnly: true
+          resources:
+            limits:
+              cpu: 100m
+              memory: 64Mi
+            requests:
+              memory: 64Mi
+              cpu: 10m
       volumes:
         - name: webhook-certs
           secret:
-            secretName: k8s-webhook-example-certs
+            secretName: k8s-sizing-webhook-certs
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: k8s-webhook-example
-  namespace: k8s-webhook-example
+  name: k8s-sizing-webhook
+  namespace: k8s-sizing-webhook
   labels:
-    app: k8s-webhook-example
+    app: k8s-sizing-webhook
 spec:
   ports:
   - name: http
@@ -64,20 +70,20 @@ spec:
     port: 8081
     targetPort: 8081
   selector:
-    app: k8s-webhook-example
+    app: k8s-sizing-webhook
 
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
-    app: k8s-webhook-example
+    app: k8s-sizing-webhook
     prometheus: prometheus
-  name: k8s-webhook-example
-  namespace: k8s-webhook-example
+  name: k8s-sizing-webhook
+  namespace: k8s-sizing-webhook
 spec:
   endpoints:
   - port: metrics
   selector:
     matchLabels:
-      app: k8s-webhook-example
+      app: k8s-sizing-webhook

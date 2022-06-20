@@ -6,7 +6,7 @@ import (
 	gohttpmetricsprometheus "github.com/slok/go-http-metrics/metrics/prometheus"
 	whprometheus "github.com/slok/kubewebhook/v2/pkg/metrics/prometheus"
 
-	"github.com/slok/k8s-webhook-example/internal/http/webhook"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/http/webhook"
 )
 
 // Types used to avoid collisions with the same interface naming.

@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/slok/k8s-webhook-example/internal/log"
-	"github.com/slok/k8s-webhook-example/internal/mutation/mark"
-	"github.com/slok/k8s-webhook-example/internal/mutation/prometheus"
-	"github.com/slok/k8s-webhook-example/internal/validation/ingress"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/log"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/mark"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/mem"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/mutation/prometheus"
+	"github.com/bitte-ein-bit/k8s-sizing-webhook/internal/validation/ingress"
 )
 
 // Config is the handler configuration.
 type Config struct {
 	MetricsRecorder            MetricsRecorder
 	Marker                     mark.Marker
+	MemoryFixer                mem.Fixer
 	IngressRegexHostValidator  ingress.Validator
 	IngressSingleHostValidator ingress.Validator
 	ServiceMonitorSafer        prometheus.ServiceMonitorSafer
@@ -50,6 +52,7 @@ func (c *Config) defaults() error {
 
 type handler struct {
 	marker           mark.Marker
+	memoryFixer      mem.Fixer
 	ingRegexHostVal  ingress.Validator
 	ingSingleHostVal ingress.Validator
 	servMonSafer     prometheus.ServiceMonitorSafer
@@ -70,6 +73,7 @@ func New(config Config) (http.Handler, error) {
 	h := handler{
 		handler:          mux,
 		marker:           config.Marker,
+		memoryFixer:      config.MemoryFixer,
 		ingRegexHostVal:  config.IngressRegexHostValidator,
 		ingSingleHostVal: config.IngressSingleHostValidator,
 		servMonSafer:     config.ServiceMonitorSafer,
