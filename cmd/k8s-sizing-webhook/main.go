@@ -37,7 +37,7 @@ func runApp() error {
 
 	// Set up logger.
 	logrusLog := logrus.New()
-	logrusLogEntry := logrus.NewEntry(logrusLog).WithField("app", "k8s-webhook-example")
+	logrusLogEntry := logrus.NewEntry(logrusLog).WithField("app", "k8s-sizing-webhook")
 	if cfg.Debug {
 		logrusLogEntry.Logger.SetLevel(logrus.DebugLevel)
 	}

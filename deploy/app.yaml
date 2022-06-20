@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: k8s-webhook-example
-  namespace: k8s-webhook-example
+  name: k8s-sizing-webhook
+  namespace: k8s-sizing-webhook
   labels:
-    app: k8s-webhook-example
+    app: k8s-sizing-webhook
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: k8s-webhook-example
+      app: k8s-sizing-webhook
   template:
     metadata:
       labels:
-        app: k8s-webhook-example
+        app: k8s-sizing-webhook
     spec:
       containers:
-        - name: k8s-webhook-example
-          image: slok/k8s-webhook-example:latest
+        - name: k8s-sizing-webhook
+          image: slok/k8s-sizing-webhook:latest
           imagePullPolicy: Always
           args:
             - --tls-cert-file-path=/etc/webhook/certs/cert.pem
             - --tls-key-file-path=/etc/webhook/certs/key.pem
             - --webhook-label-marks
-            - kubewebhook=k8s-webhook-example
+            - kubewebhook=k8s-sizing-webhook
             - --webhook-enable-ingress-single-host
             - --webhook-ingress-host-regex=.*\.valhalla\.slok\.dev
             - --webhook-sm-min-scrape-interval=15s
@@ -46,15 +46,15 @@ spec:
       volumes:
         - name: webhook-certs
           secret:
-            secretName: k8s-webhook-example-certs
+            secretName: k8s-sizing-webhook-certs
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: k8s-webhook-example
-  namespace: k8s-webhook-example
+  name: k8s-sizing-webhook
+  namespace: k8s-sizing-webhook
   labels:
-    app: k8s-webhook-example
+    app: k8s-sizing-webhook
 spec:
   ports:
   - name: http
@@ -64,20 +64,20 @@ spec:
     port: 8081
     targetPort: 8081
   selector:
-    app: k8s-webhook-example
+    app: k8s-sizing-webhook
 
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
-    app: k8s-webhook-example
+    app: k8s-sizing-webhook
     prometheus: prometheus
-  name: k8s-webhook-example
-  namespace: k8s-webhook-example
+  name: k8s-sizing-webhook
+  namespace: k8s-sizing-webhook
 spec:
   endpoints:
   - port: metrics
   selector:
     matchLabels:
-      app: k8s-webhook-example
+      app: k8s-sizing-webhook
