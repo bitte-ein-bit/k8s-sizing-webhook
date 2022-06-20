@@ -19,6 +19,7 @@ func TestMemRequestFixer(t *testing.T) {
 	tests := map[string]struct {
 		obj    metav1.Object
 		expObj metav1.Object
+		err    error
 	}{
 		"Having a pod, memory request should be equal to memory limit": {
 			obj: &corev1.Pod{
@@ -63,6 +64,7 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
 		},
 		"Having a RS, memory request should be equal to memory limit": {
 			obj: &appsv1.ReplicaSet{
@@ -121,6 +123,7 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
 		},
 		"Having a Deployment, memory request should be equal to memory limit": {
 			obj: &appsv1.Deployment{
@@ -179,6 +182,7 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
 		},
 		"Having a DS, memory request should be equal to memory limit": {
 			obj: &appsv1.DaemonSet{
@@ -237,6 +241,7 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
 		},
 		"Having a StatefulSet, memory request should be equal to memory limit": {
 			obj: &appsv1.StatefulSet{
@@ -295,6 +300,7 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
 		},
 		"Having a CronJob, memory request should be equal to memory limit": {
 			obj: &batchv1.CronJob{
@@ -361,6 +367,7 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
 		},
 		"Having a Job, memory request should be equal to memory limit": {
 			obj: &batchv1.Job{
@@ -413,6 +420,7 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
 		},
 		"Having a pod, memory limit should be set if request is set": {
 			obj: &corev1.Pod{
@@ -454,6 +462,7 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
 		},
 		"Having a pod with no requests and limits": {
 			obj: &corev1.Pod{
@@ -482,6 +491,49 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
+		},
+		"Having a pod with no requests but limits": {
+			obj: &corev1.Pod{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test",
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name:  "test",
+							Image: "busybox",
+							Resources: corev1.ResourceRequirements{
+								Limits: corev1.ResourceList{
+									corev1.ResourceMemory: *resource.NewQuantity(1000, resource.DecimalSI),
+								},
+							},
+						},
+					},
+				},
+			},
+			expObj: &corev1.Pod{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test",
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name:  "test",
+							Image: "busybox",
+							Resources: corev1.ResourceRequirements{
+								Limits: corev1.ResourceList{
+									corev1.ResourceMemory: *resource.NewQuantity(1000, resource.DecimalSI),
+								},
+								Requests: corev1.ResourceList{
+									corev1.ResourceMemory: *resource.NewQuantity(1000, resource.DecimalSI),
+								},
+							},
+						},
+					},
+				},
+			},
+			err: nil,
 		},
 		"Having a pod with multiple containers, memory request should be equal to memory limit": {
 			obj: &corev1.Pod{
@@ -550,6 +602,20 @@ func TestMemRequestFixer(t *testing.T) {
 					},
 				},
 			},
+			err: nil,
+		},
+		"Unsupported object": {
+			obj: &corev1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test",
+				},
+			},
+			expObj: &corev1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test",
+				},
+			},
+			err: mem.ErrNotSupported,
 		},
 	}
 
@@ -560,9 +626,13 @@ func TestMemRequestFixer(t *testing.T) {
 			require := require.New(t)
 
 			err := m.FixMemRequest(context.TODO(), test.obj)
-			require.NoError(err)
+			if test.err == nil {
+				require.NoError(err)
+				assert.Equal(test.expObj, test.obj)
+			} else {
+				assert.EqualError(err, test.err.Error())
+			}
 
-			assert.Equal(test.expObj, test.obj)
 		})
 	}
 }
