@@ -1,5 +1,7 @@
 # k8s-sizing-webhook
 
+[![codecov](https://codecov.io/gh/bitte-ein-bit/k8s-sizing-webhook/branch/master/graph/badge.svg?token=V0U2PNPPP3)](https://codecov.io/gh/bitte-ein-bit/k8s-sizing-webhook)
+
 A production ready [Kubernetes admission webhook][k8s-admission-webhooks] making sure resources are sized correctly using [Kubewebhook].
 
 The webhook is based on the production ready [Kubewebhook] example and comes with:
