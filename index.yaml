@@ -2,6 +2,19 @@ apiVersion: v1
 entries:
   k8s-sizing-webhook:
   - apiVersion: v2
+    appVersion: v0.2.0
+    created: "2022-08-03T13:14:46.451487746Z"
+    description: Deploys a admission webhook to fix common problems
+    digest: 755db18350f922e463af052889a6ca883893a6caa258503d56c89bdfe71e5161
+    maintainers:
+    - name: bitte-ein-bit
+      url: https://github.com/bitte-ein-bit
+    name: k8s-sizing-webhook
+    type: application
+    urls:
+    - https://github.com/bitte-ein-bit/k8s-sizing-webhook/releases/download/k8s-sizing-webhook-0.3.0/k8s-sizing-webhook-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     appVersion: v0.1.0
     created: "2022-08-03T10:01:33.924646451Z"
     description: A Helm chart for Kubernetes
