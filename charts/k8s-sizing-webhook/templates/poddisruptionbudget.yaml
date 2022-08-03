@@ -1,0 +1,11 @@
+{{- if .Values.podDisruptionBudget.create -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "k8s-sizing-webhook.fullname" . }}
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable | default 1 }}
+  selector:
+    matchLabels:
+    {{- include "k8s-sizing-webhook.selectorLabels" . | nindent 6 }}
+{{- end -}}
