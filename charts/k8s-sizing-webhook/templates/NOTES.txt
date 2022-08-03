@@ -1,0 +1,5 @@
+The webhook is deployed.
+
+Launch a new pod by e.g. running `kubectl run -it --rm --image busybox  test`. This verifies if it is working as expected.
+
+Be sure that the certificate and the name/namespace match. 

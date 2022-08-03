@@ -1,0 +1,48 @@
+{{- if or .Values.webhook.memory.enable  .Values.webhook.mark.enable }}
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "k8s-sizing-webhook.fullname" . }}
+  labels:
+    {{- include "k8s-sizing-webhook.labels" . | nindent 4 }}
+    kind: mutator
+webhooks:
+{{- if .Values.webhook.memory.enable }}
+  - name: {{ .Values.webhook.memory.name }}
+    # Avoid chicken-egg problem with our webhook deployment.
+    objectSelector:
+    {{- include "k8s-sizing-webhook.matchExpressions" . | nindent 6 }}
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
+    clientConfig:
+      service:
+        name: {{ include "k8s-sizing-webhook.fullname" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /wh/mutating/memfix
+      caBundle: {{ .Values.webhook.tls.caBundle }}
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["deployments", "daemonsets", "cronjobs", "jobs", "statefulsets", "pods"]
+{{- end }}
+{{- if .Values.webhook.mark.enable }}
+  - name: {{ .Values.webhook.mark.name }}
+    # Avoid chicken-egg problem with our webhook deployment.
+    objectSelector:
+    {{- include "k8s-sizing-webhook.matchExpressions" . | nindent 6 }}
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
+    clientConfig:
+      service:
+        name: {{ include "k8s-sizing-webhook.fullname" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /wh/mutating/allmark
+      caBundle: {{ .Values.webhook.tls.caBundle }}
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["deployments", "daemonsets", "cronjobs", "jobs", "statefulsets", "pods"]
+{{- end }}
+{{- end }}

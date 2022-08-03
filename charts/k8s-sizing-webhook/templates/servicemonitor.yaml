@@ -1,0 +1,14 @@
+{{- if .Values.serviceMonitor.create -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "k8s-sizing-webhook.fullname" . }}
+  labels:
+    {{- include "k8s-sizing-webhook.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - port: metrics
+  selector:
+    matchLabels:
+    {{- include "k8s-sizing-webhook.selectorLabels" . | nindent 6 }}
+{{- end }}
