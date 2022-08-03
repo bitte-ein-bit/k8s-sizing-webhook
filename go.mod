@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/oklog/run v1.1.0
 	github.com/prometheus/client_golang v1.12.2
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.9.0
 	github.com/slok/go-http-metrics v0.10.0
 	github.com/slok/kubewebhook/v2 v2.1.1-0.20210813062814-0d6b91199b6d
 	github.com/stretchr/testify v1.8.0
@@ -34,7 +34,7 @@ require (
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	golang.org/x/net v0.0.0-20210913180222-943fd674d43e // indirect
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
+	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gomodules.xyz/jsonpatch/v3 v3.0.1 // indirect
 	gomodules.xyz/orderedmap v0.1.0 // indirect
