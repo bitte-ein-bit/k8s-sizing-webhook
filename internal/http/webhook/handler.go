@@ -67,7 +67,7 @@ func (h handler) allMark() (http.Handler, error) {
 // memFix sets up the webhook handler for marking all kubernetes resources using Kubewebhook library.
 func (h handler) memFix() (http.Handler, error) {
 	mt := kwhmutating.MutatorFunc(func(ctx context.Context, ar *kwhmodel.AdmissionReview, obj metav1.Object) (*kwhmutating.MutatorResult, error) {
-		err, changed := h.memoryFixer.FixMemRequest(ctx, obj)
+		changed, err := h.memoryFixer.FixMemRequest(ctx, obj)
 		if err != nil {
 			return nil, fmt.Errorf("could not fix the resources memory request and limits: %w", err)
 		}

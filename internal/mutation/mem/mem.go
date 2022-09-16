@@ -18,7 +18,7 @@ func ErrNotSupported(obj metav1.Object) error {
 
 // Fixer knows how to mark Kubernetes resources.
 type Fixer interface {
-	FixMemRequest(ctx context.Context, obj metav1.Object) (error, bool)
+	FixMemRequest(ctx context.Context, obj metav1.Object) (bool, error)
 }
 
 // NewLabelFixer returns a new marker that will mark with labels.
@@ -54,7 +54,7 @@ func (m memrequestfixer) fixContainers(containers []corev1.Container) ([]corev1.
 	return returned, changed
 }
 
-func (m memrequestfixer) FixMemRequest(_ context.Context, obj metav1.Object) (error, bool) {
+func (m memrequestfixer) FixMemRequest(_ context.Context, obj metav1.Object) (bool, error) {
 	var changed bool
 	switch o := obj.(type) {
 	case *corev1.Pod:
@@ -72,9 +72,9 @@ func (m memrequestfixer) FixMemRequest(_ context.Context, obj metav1.Object) (er
 	case *batchv1.Job:
 		o.Spec.Template.Spec.Containers, changed = m.fixContainers(o.Spec.Template.Spec.Containers)
 	default:
-		return ErrNotSupported(obj), false
+		return false, ErrNotSupported(obj)
 	}
-	return nil, changed
+	return changed, nil
 }
 
 // DummyFixer is a marker that doesn't do anything.
@@ -82,4 +82,4 @@ var DummyFixer Fixer = dummyMaker(0)
 
 type dummyMaker int
 
-func (dummyMaker) FixMemRequest(_ context.Context, _ metav1.Object) (error, bool) { return nil, false }
+func (dummyMaker) FixMemRequest(_ context.Context, _ metav1.Object) (bool, error) { return false, nil }

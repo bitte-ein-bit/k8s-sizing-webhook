@@ -641,7 +641,7 @@ func TestMemRequestFixer(t *testing.T) {
 			assert := assert.New(t)
 			require := require.New(t)
 
-			err, changed := m.FixMemRequest(context.TODO(), test.obj)
+			changed, err := m.FixMemRequest(context.TODO(), test.obj)
 			if test.err == nil {
 				require.NoError(err)
 				assert.Equal(test.expObj, test.obj)
