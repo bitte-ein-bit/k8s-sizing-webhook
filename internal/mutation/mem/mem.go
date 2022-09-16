@@ -2,7 +2,8 @@ package mem
 
 import (
 	"context"
-	"errors"
+	"fmt"
+	"reflect"
 
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -10,8 +11,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// ErrNotSupported will be used when the validating object is not an ingress.
-var ErrNotSupported = errors.New("object is not supported")
+// ErrNotSupported will be used when the validating object is not supported.
+func ErrNotSupported(obj metav1.Object) error {
+	return fmt.Errorf("object %s is not supported", reflect.TypeOf(obj))
+}
 
 // Fixer knows how to mark Kubernetes resources.
 type Fixer interface {
@@ -69,7 +72,7 @@ func (m memrequestfixer) FixMemRequest(_ context.Context, obj metav1.Object) (er
 	case *batchv1.Job:
 		o.Spec.Template.Spec.Containers, changed = m.fixContainers(o.Spec.Template.Spec.Containers)
 	default:
-		return ErrNotSupported, false
+		return ErrNotSupported(obj), false
 	}
 	return nil, changed
 }

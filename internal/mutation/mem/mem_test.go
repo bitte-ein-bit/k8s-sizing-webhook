@@ -627,7 +627,10 @@ func TestMemRequestFixer(t *testing.T) {
 					Name: "test",
 				},
 			},
-			err:     mem.ErrNotSupported,
+			err: mem.ErrNotSupported(&corev1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test",
+				}}),
 			changed: false,
 		},
 	}
