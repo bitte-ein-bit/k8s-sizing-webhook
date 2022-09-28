@@ -7,6 +7,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
+	batchv1beta1 "k8s.io/api/batch/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -68,6 +69,8 @@ func (m memrequestfixer) FixMemRequest(_ context.Context, obj metav1.Object) (bo
 	case *appsv1.StatefulSet:
 		o.Spec.Template.Spec.Containers, changed = m.fixContainers(o.Spec.Template.Spec.Containers)
 	case *batchv1.CronJob:
+		o.Spec.JobTemplate.Spec.Template.Spec.Containers, changed = m.fixContainers(o.Spec.JobTemplate.Spec.Template.Spec.Containers)
+	case *batchv1beta1.CronJob:
 		o.Spec.JobTemplate.Spec.Template.Spec.Containers, changed = m.fixContainers(o.Spec.JobTemplate.Spec.Template.Spec.Containers)
 	case *batchv1.Job:
 		o.Spec.Template.Spec.Containers, changed = m.fixContainers(o.Spec.Template.Spec.Containers)

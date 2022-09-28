@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
+	batchv1beta1 "k8s.io/api/batch/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -297,6 +298,74 @@ func TestMemRequestFixer(t *testing.T) {
 										},
 										Requests: corev1.ResourceList{
 											corev1.ResourceMemory: *resource.NewQuantity(1500, resource.DecimalSI),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			err:     nil,
+			changed: true,
+		},
+		"Having a v1beta1 CronJob, memory request should be equal to memory limit": {
+			obj: &batchv1beta1.CronJob{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "cronjob",
+				},
+				Spec: batchv1beta1.CronJobSpec{
+					JobTemplate: batchv1beta1.JobTemplateSpec{
+						ObjectMeta: metav1.ObjectMeta{
+							Name: "test",
+						},
+						Spec: batchv1.JobSpec{
+							Template: corev1.PodTemplateSpec{
+								Spec: corev1.PodSpec{
+									Containers: []corev1.Container{
+										{
+											Name:  "test",
+											Image: "busybox",
+											Resources: corev1.ResourceRequirements{
+												Limits: corev1.ResourceList{
+													corev1.ResourceMemory: *resource.NewQuantity(1500, resource.DecimalSI),
+												},
+												Requests: corev1.ResourceList{
+													corev1.ResourceMemory: *resource.NewQuantity(1000, resource.DecimalSI),
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expObj: &batchv1beta1.CronJob{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "cronjob",
+				},
+				Spec: batchv1beta1.CronJobSpec{
+					JobTemplate: batchv1beta1.JobTemplateSpec{
+						ObjectMeta: metav1.ObjectMeta{
+							Name: "test",
+						},
+						Spec: batchv1.JobSpec{
+							Template: corev1.PodTemplateSpec{
+								Spec: corev1.PodSpec{
+									Containers: []corev1.Container{
+										{
+											Name:  "test",
+											Image: "busybox",
+											Resources: corev1.ResourceRequirements{
+												Limits: corev1.ResourceList{
+													corev1.ResourceMemory: *resource.NewQuantity(1500, resource.DecimalSI),
+												},
+												Requests: corev1.ResourceList{
+													corev1.ResourceMemory: *resource.NewQuantity(1500, resource.DecimalSI),
+												},
+											},
 										},
 									},
 								},
