@@ -36,11 +36,13 @@ webhook:
   mark:
     name: allmark.bitteeinbit.dev
     enable: true
+    failurePolicy: Fail
     labels:
       kubewebhook: k8s-webhook-example
   memory:
     name: memfix.bitteeinbit.dev
     enable: true
+    failurePolicy: Fail
 
 
 serviceMonitor:
