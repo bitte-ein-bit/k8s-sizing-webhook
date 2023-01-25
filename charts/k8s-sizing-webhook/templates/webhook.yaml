@@ -14,6 +14,7 @@ webhooks:
     {{- include "k8s-sizing-webhook.matchExpressions" . | nindent 6 }}
     admissionReviewVersions: ["v1"]
     sideEffects: None
+    failurePolicy: {{ .Values.webhook.memory.failurePolicy }}
     clientConfig:
       service:
         name: {{ include "k8s-sizing-webhook.fullname" . }}
@@ -33,6 +34,7 @@ webhooks:
     {{- include "k8s-sizing-webhook.matchExpressions" . | nindent 6 }}
     admissionReviewVersions: ["v1"]
     sideEffects: None
+    failurePolicy: {{ .Values.webhook.mark.failurePolicy }}
     clientConfig:
       service:
         name: {{ include "k8s-sizing-webhook.fullname" . }}
