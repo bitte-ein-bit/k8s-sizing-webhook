@@ -3,6 +3,19 @@ entries:
   k8s-sizing-webhook:
   - apiVersion: v2
     appVersion: v0.3.0
+    created: "2023-01-25T08:35:10.165082604Z"
+    description: Deploys a admission webhook to fix common problems
+    digest: cf740521f8b0339aeae7b9edd72b4370159e7567681c1977e2a93a2d9a1486b1
+    maintainers:
+    - name: bitte-ein-bit
+      url: https://github.com/bitte-ein-bit
+    name: k8s-sizing-webhook
+    type: application
+    urls:
+    - https://github.com/bitte-ein-bit/k8s-sizing-webhook/releases/download/k8s-sizing-webhook-0.5.0/k8s-sizing-webhook-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
+    appVersion: v0.3.0
     created: "2022-10-10T13:07:52.322732986Z"
     description: Deploys a admission webhook to fix common problems
     digest: 6e5c0da6c7a63ea5980935e6a337cb62f142cf7a8a7d9a9067d58d9d629e4ba0
@@ -53,4 +66,4 @@ entries:
     urls:
     - https://github.com/bitte-ein-bit/k8s-sizing-webhook/releases/download/k8s-sizing-webhook-0.1.0/k8s-sizing-webhook-0.1.0.tgz
     version: 0.1.0
-generated: "2022-10-10T13:07:52.322752287Z"
+generated: "2023-01-25T08:35:10.165111204Z"
