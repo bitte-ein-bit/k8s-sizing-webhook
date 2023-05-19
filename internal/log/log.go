@@ -23,11 +23,11 @@ var _ Logger = Dummy
 
 type dummy int
 
-func (d dummy) Infof(format string, args ...interface{})    {}
-func (d dummy) Warningf(format string, args ...interface{}) {}
-func (d dummy) Errorf(format string, args ...interface{})   {}
-func (d dummy) Debugf(format string, args ...interface{})   {}
-func (d dummy) WithKV(KV) Logger                            { return d }
+func (d dummy) Infof(_ string, _ ...interface{})    {}
+func (d dummy) Warningf(_ string, _ ...interface{}) {}
+func (d dummy) Errorf(_ string, _ ...interface{})   {}
+func (d dummy) Debugf(_ string, _ ...interface{})   {}
+func (d dummy) WithKV(KV) Logger                    { return d }
 
 type logger struct {
 	*logrus.Entry
