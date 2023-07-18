@@ -1,0 +1,20 @@
+Main:
+  files:
+  - $all
+  - "!$test"
+  allow:
+  - $gostd
+  - k8s.io/apimachinery/
+  - k8s.io/api/
+  - github.com/slok/kubewebhook/v2/
+  - github.com/sirupsen/logrus
+  deny:
+    reflect: Please don't use reflect package
+Test:
+  files:
+  - $test
+  allow:
+  - $gostd
+  - github.com/stretchr/testify
+  deny:
+    reflect: Please don't use reflect package
