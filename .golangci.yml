@@ -15,3 +15,30 @@ linters:
     - gofmt
     - depguard
     - godot
+
+linters-settings:
+  depguard:
+    rules:
+      main:
+        files:
+        - $all
+        - "!$test"
+        allow:
+        - $gostd
+        - k8s.io/apimachinery
+        - k8s.io/api
+        - github.com/slok/kubewebhook/v2
+        - github.com/slok/go-http-metrics
+        - github.com/sirupsen/logrus
+        - github.com/bitte-ein-bit/k8s-sizing-webhook
+        - github.com/prometheus/client_golang/prometheus
+        - github.com/oklog/run
+      tests:
+        files:
+        - $test
+        allow:
+        - $gostd
+        - github.com/stretchr/testify
+        - k8s.io/apimachinery
+        - k8s.io/api
+        - github.com/bitte-ein-bit/k8s-sizing-webhook
