@@ -22,7 +22,7 @@ type Fixer interface {
 	FixMemRequest(ctx context.Context, obj metav1.Object) (bool, error)
 }
 
-// NewLabelFixer returns a new marker that will mark with labels.
+// NewMemRequestFixer returns a new marker that will mark with labels.
 func NewMemRequestFixer() Fixer {
 	return memrequestfixer{}
 }
