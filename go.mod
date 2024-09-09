@@ -3,19 +3,18 @@ module github.com/bitte-ein-bit/k8s-sizing-webhook
 go 1.23.0
 
 require (
+	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/oklog/run v1.1.0
 	github.com/prometheus/client_golang v1.20.3
 	github.com/sirupsen/logrus v1.9.3
 	github.com/slok/go-http-metrics v0.13.0
 	github.com/slok/kubewebhook/v2 v2.7.0
 	github.com/stretchr/testify v1.9.0
-	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	k8s.io/api v0.31.0
 	k8s.io/apimachinery v0.31.0
 )
 
 require (
-	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/alecthomas/units v0.0.0-20240626203959-61d1e3462e30 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -34,6 +33,7 @@ require (
 	github.com/prometheus/common v0.59.1 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
+	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
