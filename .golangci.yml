@@ -1,9 +1,6 @@
 ---
 
 run:
-  skip-dirs:
-    - test/integration/crd
-
   build-tags:
     - integration
 
@@ -18,6 +15,10 @@ linters:
     - godot
     - unused
     - bodyclose
+
+issues:
+  exclude-dirs:
+    - test/integration/crd
 
 linters-settings:
   depguard:

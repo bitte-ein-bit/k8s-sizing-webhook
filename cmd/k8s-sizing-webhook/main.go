@@ -110,7 +110,7 @@ func runApp() error {
 		mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
 
 		// Health checks.
-		mux.HandleFunc("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+		mux.HandleFunc("/healthz", http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {}))
 
 		server := http.Server{Addr: cfg.MetricsListenAddr, Handler: mux}
 

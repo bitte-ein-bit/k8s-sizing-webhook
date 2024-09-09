@@ -32,7 +32,7 @@ func (l kubewebhookLogger) SetValuesOnCtx(parent context.Context, values map[str
 
 // allmark sets up the webhook handler for marking all kubernetes resources using Kubewebhook library.
 func (h handler) allMark() (http.Handler, error) {
-	mt := kwhmutating.MutatorFunc(func(ctx context.Context, ar *kwhmodel.AdmissionReview, obj metav1.Object) (*kwhmutating.MutatorResult, error) {
+	mt := kwhmutating.MutatorFunc(func(ctx context.Context, _ *kwhmodel.AdmissionReview, obj metav1.Object) (*kwhmutating.MutatorResult, error) {
 		err := h.marker.Mark(ctx, obj)
 		if err != nil {
 			return nil, fmt.Errorf("could not mark the resource: %w", err)
@@ -66,7 +66,7 @@ func (h handler) allMark() (http.Handler, error) {
 
 // memFix sets up the webhook handler for marking all kubernetes resources using Kubewebhook library.
 func (h handler) memFix() (http.Handler, error) {
-	mt := kwhmutating.MutatorFunc(func(ctx context.Context, ar *kwhmodel.AdmissionReview, obj metav1.Object) (*kwhmutating.MutatorResult, error) {
+	mt := kwhmutating.MutatorFunc(func(ctx context.Context, _ *kwhmodel.AdmissionReview, obj metav1.Object) (*kwhmutating.MutatorResult, error) {
 		changed, err := h.memoryFixer.FixMemRequest(ctx, obj)
 		if err != nil {
 			return nil, fmt.Errorf("could not fix the resources memory request and limits: %w", err)
