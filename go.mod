@@ -1,6 +1,6 @@
 module github.com/bitte-ein-bit/k8s-sizing-webhook
 
-go 1.18
+go 1.22
 
 require (
 	github.com/oklog/run v1.1.0
