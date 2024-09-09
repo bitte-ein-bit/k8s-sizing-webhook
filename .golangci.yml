@@ -1,13 +1,11 @@
 ---
 
 run:
-  skip-dirs:
-    - test/integration/crd
-
   build-tags:
     - integration
 
 linters:
+  disable-all: true
   enable:
     - misspell
     - goimports
@@ -15,6 +13,12 @@ linters:
     - gofmt
     - depguard
     - godot
+    - unused
+    - bodyclose
+
+issues:
+  exclude-dirs:
+    - test/integration/crd
 
 linters-settings:
   depguard:
@@ -33,6 +37,7 @@ linters-settings:
         - github.com/bitte-ein-bit/k8s-sizing-webhook
         - github.com/prometheus/client_golang/prometheus
         - github.com/oklog/run
+        - github.com/alecthomas/kingpin/v2
       tests:
         files:
         - $test
